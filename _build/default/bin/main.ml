@@ -1,0 +1,3 @@
+
+Camel.Weather.curr
+
