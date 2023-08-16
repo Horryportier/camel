@@ -45,17 +45,28 @@ let to_current_weather json =
 
 
 let print_curr c=
+    let open ANSITerminal in
     let open Utils in
-    Printf.printf "temp: %s \n time: %s  ws: %s wd: %s" 
-    (c.temperature |> float_of_option |> Printf.sprintf "%.2f"|> to_styled 1 34 ) 
-    (c.time |> string_of_option |> to_styled 3 32)
-    (c.wind_speed |> float_of_option |> Printf.sprintf "%.2f" |> to_styled 1 33)
-    (c.wind_direection |> float_of_option |> Printf.sprintf "%.2f" |> to_styled 1 33)
+    let temp = c.temperature |> float_of_option in
+    Printf.printf "temp: %s  time: %s  ws: %s wd: %s" 
+    (sprintf (temp_to_style temp) "%.2f" temp ) 
+    (sprintf [black] "%s" (c.time |> string_of_option))
+    (sprintf [cyan] "%.2f" (c.wind_speed |> float_of_option))
+    (sprintf [yellow] "%.2f" (c.wind_direection|> float_of_option))
 
     
+let cords lati long = 
+    let env = Utils.get_env_cords in
+    let (is_lati, lati) = match lati with
+    | Some c -> (true, c)
+    | None -> (false, 0.0) in
+    let (is_long, long) = match long with
+    | Some c -> (true, c)
+    | None -> (false, 0.0) in
+    if is_lati && is_long then (lati, long) else env
 
-let curr = 
-    let resp = call_api Utils.get_env_cords in
+let curr lati long = 
+    let resp = call_api (cords lati long) in
     let body = Lwt_main.run resp in
     let json = parse_api_call body in
     let curr = to_current_weather json in

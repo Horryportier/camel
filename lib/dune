@@ -1,4 +1,4 @@
 (library
  (name camel)
- (libraries lwt cohttp cohttp-lwt-unix yojson)
+ (libraries lwt cohttp cohttp-lwt-unix yojson ANSITerminal)
  )
